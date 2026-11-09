@@ -1,29 +1,50 @@
 {
   "name": "comic-book-catalogue",
   "private": true,
-  "version": "0.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "check-types": "turbo run check-types",
+    "dev:web": "turbo run dev -F web --",
+    "dev:server": "turbo run dev -F server --",
+    "db:push": "turbo run db:push -F @comic-book-catalogue/db --",
+    "db:studio": "turbo run db:studio -F @comic-book-catalogue/db --",
+    "db:generate": "turbo run db:generate -F @comic-book-catalogue/db --",
+    "db:migrate": "turbo run db:migrate -F @comic-book-catalogue/db --",
+    "db:start": "docker compose up -d postgres",
+    "db:watch": "docker compose up postgres",
+    "db:stop": "docker compose stop postgres",
+    "db:down": "docker compose down postgres",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
+    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
+    "auth:generate": "cd apps/server && npm run auth:generate",
+    "check": "biome check --write ."
   },
   "dependencies": {
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "zod": "^4.5.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@rolldown/plugin-babel": "^0.2.4",
-    "@types/babel__core": "^7.20.5",
-    "@types/node": "^24.19.2",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.2",
-    "babel-plugin-react-compiler": "^1.0.0",
-    "oxlint": "^1.89.0",
-    "typescript": "~7.0.2",
-    "vite": "^8.3.5"
+    "@biomejs/biome": "^2.6.2",
+    "@comic-book-catalogue/config": "*",
+    "@types/node": "^26.4.1",
+    "turbo": "^2.11.7",
+    "typescript": "^6.0.3",
+    "varlock": "1.23.0"
+  },
+  "packageManager": "npm@12.2.0",
+  "allowScripts": {
+    "esbuild": true,
+    "sharp": true,
+    "@prisma/engines": true,
+    "prisma": true
   }
 }

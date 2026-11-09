@@ -1,35 +1,140 @@
-# React + TypeScript + Vite
+# comic-book-catalogue
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## Features
 
-Currently, two official plugins are available:
+- **TypeScript** - For type safety and improved developer experience
+- **TanStack Router** - File-based routing with full type safety
+- **TailwindCSS** - Utility-first CSS for rapid UI development
+- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
+- **Hono** - Lightweight, performant server framework
+- **Node.js** - Runtime environment
+- **Prisma** - TypeScript-first ORM
+- **PostgreSQL** - Database engine
+- **Authentication** - Better-Auth
+- **Biome** - Linting and formatting
+- **Turborepo** - Optimized monorepo build system
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Getting Started
 
-## React Compiler
+First, install the dependencies:
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Database Setup
+
+Generate the Prisma client before development, typechecking, or building, including in CI and deployment builds. Run this again after changing the Prisma schema:
+
+```bash
+npm run db:generate
+```
+
+This project uses PostgreSQL with Prisma.
+
+1. Make sure you have a PostgreSQL database set up.
+2. Update your `apps/server/.env` file with your PostgreSQL connection details.
+
+3. Apply the schema to your database:
+
+```bash
+npm run db:push
+```
+
+Then, run the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3003](http://localhost:3003) in your browser to see the web application.
+The API is running at [http://localhost:3002](http://localhost:3002).
+
+## UI Customization
+
+React web apps in this stack share shadcn/ui primitives through `packages/ui`.
+
+- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
+- Update shared primitives in `packages/ui/src/components/*`
+- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
+
+### Add more shared components
+
+Run this from the project root to add more primitives to the shared UI package:
+
+```bash
+npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
+```
+
+Import shared components like this:
+
+```tsx
+import { Button } from "@comic-book-catalogue/ui/components/button";
+```
+
+### Add app-specific blocks
+
+If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
+
+## Environment Configuration
+
+Each app owns its environment schema in `.env.schema`. Varlock generates `src/env.ts` during installation; run `npm run env:generate` after changing a schema. Commit schemas, and keep secrets in ignored env files or your deployment platform.
+
+Import the generated `ENV` accessor in application code. Shared database and auth packages receive configuration or initialized clients from the application. See [Varlock's monorepo guide](https://varlock.dev/guides/monorepos/).
+
+Bun's automatic env loading is disabled in `bunfig.toml`; the framework integration or server bootstrap loads Varlock. Node deployments must include Varlock and its dependencies alongside the app schema.
+
+Run standalone Node/Bun tools that use Varlock from the owning app directory so they load that app's schema and env files. `env:generate` only generates TypeScript files; it does not initialize environment values in a subsequent command.
+
+## Deployment
+
+### Docker Compose
+
+- Target: web + server
+- Config: `docker-compose.yml` (app Dockerfiles live in `apps/*/Dockerfile`)
+- Build images: npm run docker:build
+- Start: npm run docker:up
+- Logs: npm run docker:logs
+- Stop: npm run docker:down
+
+Environment variables are read from each app's `.env` file (baked into web builds for public variables) and overridden in `docker-compose.yml` for container networking.
+
+For more details, see the guide on [Deploying with Docker Compose](https://www.better-t-stack.dev/docs/guides/docker).
+
+## Git Hooks and Formatting
+
+- Run checks: `npm run check`
+
+## Project Structure
+
+```
+comic-book-catalogue/
+├── apps/
+│   ├── web/         # Frontend application (React + TanStack Router)
+│   └── server/      # Backend API (Hono)
+├── packages/
+│   ├── ui/          # Shared shadcn/ui components and styles
+│   ├── auth/        # Authentication configuration & logic
+│   └── db/          # Database schema & queries
+```
+
+## Available Scripts
+
+- `npm run dev`: Start all applications in development mode
+- `npm run build`: Build all applications
+- `npm run dev:web`: Start only the web application
+- `npm run dev:server`: Start only the server
+- `npm run check-types`: Check TypeScript types across all apps
+- `npm run db:push`: Push schema changes to database
+- `npm run db:generate`: Generate database client/types
+- `npm run db:migrate`: Run database migrations
+- `npm run db:studio`: Open database studio UI
+- `npm run check`: Run Biome formatting and linting
+- `npm run docker:build`: Build the Docker Compose images
+- `npm run docker:up`: Build and start the Docker Compose stack
+- `npm run docker:logs`: Tail logs from the Docker Compose stack
+- `npm run docker:down`: Stop the Docker Compose stack
+
+## Better Auth Schema Generation
+
+After changing auth plugins or schema options, run `npm run auth:generate` from the project root. The script runs the Better Auth CLI through `varlock run` from the owning app directory, loading the auth instance from `src/services.ts`. Review the schema changes, then use your ORM's migration workflow to apply them.

@@ -1,0 +1,20 @@
+{
+  "name": "@comic-book-catalogue/auth",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@comic-book-catalogue/db": "*",
+    "better-auth": "1.7.12",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@comic-book-catalogue/config": "*",
+    "typescript": "^6.0.3"
+  }
+}
