@@ -1,14 +1,8 @@
-import type { Prisma } from "@comic-book-catalogue/db";
+import type { OrderRecord } from "@comic-book-catalogue/types/order/repository";
 import type {
 	OrderGetAllResponse,
 	OrderGetByIdResponse,
 } from "@comic-book-catalogue/types/order/response";
-
-import type { orderSelector } from "./order.utils.selector";
-
-type OrderRecord = Prisma.OrderGetPayload<{
-	select: ReturnType<typeof orderSelector.getAllSelector>;
-}>;
 
 const formatOrder = (order: OrderRecord): OrderGetByIdResponse => ({
 	id: order.id,

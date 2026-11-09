@@ -1,15 +1,9 @@
-import type { Prisma } from "@comic-book-catalogue/db";
+import type { CustomerRecord } from "@comic-book-catalogue/types/customer/repository";
 import type {
 	CustomerGetAllResponse,
 	CustomerGetByIdResponse,
 	CustomerRemoveResponse,
 } from "@comic-book-catalogue/types/customer/response";
-
-import type { customerSelector } from "./customer.utils.selector";
-
-type CustomerRecord = Prisma.CustomerGetPayload<{
-	select: ReturnType<typeof customerSelector.getAllSelector>;
-}>;
 
 const formatCustomer = (customer: CustomerRecord): CustomerGetByIdResponse => ({
 	id: customer.id,

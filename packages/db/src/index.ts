@@ -4,6 +4,11 @@ import { PrismaClient } from "../prisma/generated/client";
 import type { DatabaseConfig } from "./config";
 
 export { Prisma } from "../prisma/generated/client";
+export {
+	BookCondition,
+	MembershipStatus,
+	OrderStatus,
+} from "../prisma/generated/enums";
 
 export function createPrismaClient(env: DatabaseConfig) {
 	const adapter = new PrismaPg({

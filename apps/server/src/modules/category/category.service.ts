@@ -11,32 +11,65 @@ import type {
 	CategoryUpdateResponse,
 } from "@comic-book-catalogue/types/category/response";
 
-// TODO: implement category business logic.
+import { categoryRepository } from "./category.repository";
+import { categoryFormatter } from "./utils/category.utils.formatter";
+
 const getAll = async (
-	_input: CategoryGetAllRequest,
+	input: CategoryGetAllRequest,
 ): Promise<CategoryGetAllResponse> => {
-	throw new Error("categoryService.getAll is not implemented");
+	const categories = await categoryRepository.getAll({
+		where: input.search
+			? {
+					name: {
+						contains: input.search,
+						mode: "insensitive",
+					},
+				}
+			: undefined,
+		orderBy: { name: "asc" },
+	});
+
+	return categoryFormatter.getAllFormatter(categories);
 };
 
-const getById = async (_id: string): Promise<CategoryGetByIdResponse> => {
-	throw new Error("categoryService.getById is not implemented");
+const getById = async (id: string): Promise<CategoryGetByIdResponse> => {
+	const category = await categoryRepository.getById({ id });
+
+	if (!category) {
+		throw new Error("Category not found");
+	}
+
+	return categoryFormatter.getByIdFormatter(category);
 };
 
 const create = async (
-	_input: CategoryCreateRequest,
+	input: CategoryCreateRequest,
 ): Promise<CategoryCreateResponse> => {
-	throw new Error("categoryService.create is not implemented");
+	const category = await categoryRepository.create({
+		name: input.name,
+	});
+
+	return categoryFormatter.createFormatter(category);
 };
 
 const update = async (
-	_id: string,
-	_input: CategoryUpdateRequest,
+	id: string,
+	input: CategoryUpdateRequest,
 ): Promise<CategoryUpdateResponse> => {
-	throw new Error("categoryService.update is not implemented");
+	const category = await categoryRepository.update(
+		{ id },
+		{
+			name: input.name,
+		},
+	);
+
+	return categoryFormatter.updateFormatter(category);
 };
 
-const remove = async (_id: string): Promise<CategoryRemoveResponse> => {
-	throw new Error("categoryService.remove is not implemented");
+const remove = async (id: string): Promise<CategoryRemoveResponse> => {
+	const removed = await categoryRepository.remove({ id });
+
+	return categoryFormatter.removeFormatter(removed.id);
 };
 
 export const categoryService = {

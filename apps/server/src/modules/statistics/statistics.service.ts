@@ -1,9 +1,22 @@
+import { Prisma } from "@comic-book-catalogue/db";
 import type { StatisticsGetSummaryResponse } from "@comic-book-catalogue/types/statistics/response";
 
-// TODO: implement statistics business logic. Inventory value is the sum of
-// price * stock across all comic books.
+import { statisticsRepository } from "./statistics.repository";
+
 const getSummary = async (): Promise<StatisticsGetSummaryResponse> => {
-	throw new Error("statisticsService.getSummary is not implemented");
+	const summary = await statisticsRepository.getSummaryData();
+
+	const inventoryValue = summary.books.reduce(
+		(total, book) => total.plus(book.price.mul(book.stock)),
+		new Prisma.Decimal(0),
+	);
+
+	return {
+		totalBooks: summary.totalBooks,
+		totalCustomers: summary.totalCustomers,
+		totalOrders: summary.totalOrders,
+		inventoryValue: Number(inventoryValue),
+	};
 };
 
 export const statisticsService = {

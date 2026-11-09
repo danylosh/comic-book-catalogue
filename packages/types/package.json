@@ -10,6 +10,7 @@
 		"check-types": "tsc --noEmit"
 	},
 	"dependencies": {
+		"@comic-book-catalogue/db": "*",
 		"zod": "^4.5.4"
 	},
 	"devDependencies": {

@@ -1,15 +1,9 @@
-import type { Prisma } from "@comic-book-catalogue/db";
+import type { BookRecord } from "@comic-book-catalogue/types/book/repository";
 import type {
 	BookGetAllResponse,
 	BookGetByIdResponse,
 	BookRemoveResponse,
 } from "@comic-book-catalogue/types/book/response";
-
-import type { bookSelector } from "./book.utils.selector";
-
-type BookRecord = Prisma.BookGetPayload<{
-	select: ReturnType<typeof bookSelector.getAllSelector>;
-}>;
 
 const formatBook = (book: BookRecord): BookGetByIdResponse => ({
 	...book,

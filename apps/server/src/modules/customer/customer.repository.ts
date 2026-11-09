@@ -1,20 +1,69 @@
 import type { Prisma } from "@comic-book-catalogue/db";
+import type {
+	CustomerFindManyInput,
+	CustomerGetAllResult,
+	CustomerRecord,
+} from "@comic-book-catalogue/types/customer/repository";
 
-// TODO: implement customer data access.
+import { db } from "../../db";
+import { customerSelector } from "./utils/customer.utils.selector";
+
+const getAll = async (
+	input: CustomerFindManyInput = {},
+): Promise<CustomerGetAllResult> => {
+	const [customers, total] = await Promise.all([
+		db.customer.findMany({
+			...input,
+			select: customerSelector.getAllSelector(),
+		}),
+		db.customer.count({ where: input.where }),
+	]);
+
+	return { customers, total };
+};
+
+const getById = async (
+	where: Prisma.CustomerWhereUniqueInput,
+): Promise<CustomerRecord | null> => {
+	return db.customer.findUnique({
+		where,
+		select: customerSelector.getByIdSelector(),
+	});
+};
+
+const create = async (
+	data: Prisma.CustomerCreateInput,
+): Promise<CustomerRecord> => {
+	return db.customer.create({
+		data,
+		select: customerSelector.getByIdSelector(),
+	});
+};
+
+const update = async (
+	where: Prisma.CustomerWhereUniqueInput,
+	data: Prisma.CustomerUpdateInput,
+): Promise<CustomerRecord> => {
+	return db.customer.update({
+		where,
+		data,
+		select: customerSelector.getByIdSelector(),
+	});
+};
+
+const remove = async (
+	where: Prisma.CustomerWhereUniqueInput,
+): Promise<{ id: string }> => {
+	return db.customer.delete({
+		where,
+		select: { id: true },
+	});
+};
+
 export const customerRepository = {
-	getAll: async (_where: Prisma.CustomerWhereInput) => {
-		throw new Error("customerRepository.getAll is not implemented");
-	},
-	getById: async (_id: string) => {
-		throw new Error("customerRepository.getById is not implemented");
-	},
-	create: async (_data: Prisma.CustomerCreateInput) => {
-		throw new Error("customerRepository.create is not implemented");
-	},
-	update: async (_id: string, _data: Prisma.CustomerUpdateInput) => {
-		throw new Error("customerRepository.update is not implemented");
-	},
-	remove: async (_id: string) => {
-		throw new Error("customerRepository.remove is not implemented");
-	},
+	getAll,
+	getById,
+	create,
+	update,
+	remove,
 };
