@@ -1,7 +1,8 @@
 import { createAuth } from "@comic-book-catalogue/auth";
-import { createPrismaClient } from "@comic-book-catalogue/db";
 
+import { db } from "./db";
 import { ENV } from "./env.server";
 
-export const db = createPrismaClient(ENV);
+export { db };
+
 export const auth = createAuth(ENV, db);

@@ -1,0 +1,6 @@
+{
+	"extends": "@comic-book-catalogue/config/tsconfig.base.json",
+	"compilerOptions": {
+		"noEmit": true
+	}
+}
