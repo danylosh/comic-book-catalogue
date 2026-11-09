@@ -1,0 +1,44 @@
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  books     Book[]
+
+// Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Book {
+  id              String        @id @default(uuid())
+  title           String
+  author          String
+  publisher       String
+  publicationYear Int
+  condition       BookCondition @default(GOOD)
+  price           Decimal       @db.Decimal(10, 2)
+  stock           Int           @default(0)
+  categoryId      String
+  orderItems      OrderItem[]
+
+// Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+// Relations
+  category        Category      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@index([categoryId])
+  @@index([title])
+}
+
+enum BookCondition {
+  MINT
+  NEAR_MINT
+  VERY_FINE
+  FINE
+  VERY_GOOD
+  GOOD
+  FAIR
+  POOR
+}
+

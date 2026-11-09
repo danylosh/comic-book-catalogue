@@ -1,0 +1,23 @@
+model Customer {
+  id           String           @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String           @unique
+  phoneNumber  String
+  membership   MembershipStatus @default(NONE)
+  orders       Order[]
+
+// Timestamps
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([lastName, firstName])
+  @@map("customers")
+}
+
+enum MembershipStatus {
+  NONE
+  BASIC
+  PREMIUM
+}
+
