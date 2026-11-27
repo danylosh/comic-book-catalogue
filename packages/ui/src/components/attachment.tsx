@@ -33,14 +33,12 @@ function Attachment({
   VariantProps<typeof attachmentVariants> & {
     state?: "idle" | "uploading" | "processing" | "error" | "done";
   }) {
-  const resolvedOrientation = orientation ?? "horizontal";
-
   return (
     <div
       data-slot="attachment"
       data-state={state}
       data-size={size}
-      data-orientation={resolvedOrientation}
+      data-orientation={orientation}
       className={cn(attachmentVariants({ size, orientation }), className)}
       {...props}
     />
@@ -109,8 +107,7 @@ function AttachmentDescription({ className, ...props }: React.ComponentProps<"sp
     <span
       data-slot="attachment-description"
       className={cn(
-        "mt-0.5 block min-w-0 truncate text-xs text-muted-foreground group-data-[state=error]/attachment:text-destructive/80",
-        "max-w-full",
+        "mt-0.5 block max-w-full min-w-0 truncate text-xs text-muted-foreground group-data-[state=error]/attachment:text-destructive/80",
         className,
       )}
       {...props}
@@ -144,7 +141,7 @@ function AttachmentAction({
       type={type}
       variant={variant ?? "ghost"}
       size={size}
-      className={cn(className)}
+      className={className}
       {...props}
     />
   );
